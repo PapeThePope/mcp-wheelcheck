@@ -253,6 +253,30 @@ npx -y mcp-wheelcheck
 
 ---
 
+## Important: Tell your agent to use it
+
+Installing the server is not enough. Most coding agents won't proactively call `find_similar` before writing code unless you tell them to. The tool description says "use this before writing code," but agents need an explicit instruction.
+
+Add a rule to your agent's instructions file (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `AGENTS.md`, or wherever your client reads project/global instructions):
+
+```markdown
+## Before writing any new feature, tool, or package — check the ecosystem first
+
+Before implementing a new feature, tool, library, or package, you MUST call
+the `find_similar` tool with a description of what you're about to build.
+
+1. Describe the feature in natural language.
+2. Call `find_similar`.
+3. Read the verdict (USE_EXISTING / BUILD_NEW / MIXED).
+4. If USE_EXISTING: recommend the existing package. Do not write code.
+5. If MIXED: use the existing package as a dependency, build only the gap.
+6. If BUILD_NEW: proceed — you now know it's actually novel.
+```
+
+Without this, the agent will happily start coding and only check wheelcheck if you explicitly ask. With it, the agent checks first and avoids reinventing wheels.
+
+---
+
 ## Optional: GitHub Token
 
 Without a token, GitHub search is rate-limited to approximately:
